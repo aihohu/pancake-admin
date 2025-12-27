@@ -1,0 +1,8 @@
+blank_issues_enabled: false # 禁止创建空白 Issue，强制使用模板
+contact_links:
+  - name: 📖 Documentation
+    url: https://your-docs-link.com
+    about: 请先查阅文档
+  - name: 💬 Discussions
+    url: https://github.com/your-username/your-repo/discussions
+    about: 如果只是咨询问题，请前往讨论区
