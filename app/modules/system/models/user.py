@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import BigInteger, Boolean, DateTime, String, func
+from sqlalchemy import BigInteger, DateTime, String, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.id_generator import next_id
@@ -24,11 +24,16 @@ class User(Base):
     hashed_password: Mapped[str] = mapped_column(
         String(255), nullable=False, comment="加密密码"
     )
-    is_active: Mapped[bool] = mapped_column(Boolean, default=True, comment="状态")
+    is_active: Mapped[str] = mapped_column(String(10), default="1", comment="状态")
 
-    avatar: Mapped[str] = mapped_column(String(255), nullable=True, comment="头像地址")
-    email: Mapped[str] = mapped_column(String(100), nullable=True, comment="邮箱")
-    phone: Mapped[str] = mapped_column(String(20), nullable=True, comment="手机号")
+    user_avatar: Mapped[str] = mapped_column(
+        String(255), nullable=True, comment="头像地址"
+    )
+    user_email: Mapped[str] = mapped_column(String(100), nullable=True, comment="邮箱")
+    user_phone: Mapped[str] = mapped_column(String(20), nullable=True, comment="手机号")
+    user_gender: Mapped[str] = mapped_column(
+        String(1), nullable=True, comment="用户性别: 0:未知,1:男,2:女"
+    )
 
     create_time: Mapped[datetime] = mapped_column(
         DateTime, server_default=func.now(), comment="创建时间"

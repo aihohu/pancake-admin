@@ -18,16 +18,21 @@ class Role(Base):
     role_id: Mapped[int] = mapped_column(
         BigInteger, primary_key=True, default=next_id, comment="角色ID"
     )
-    name: Mapped[str] = mapped_column(
+    role_name: Mapped[str] = mapped_column(
         String(50), unique=True, nullable=False, comment="角色名称"
     )
-    code: Mapped[str] = mapped_column(
+    role_code: Mapped[str] = mapped_column(
         String(50), unique=True, nullable=False, comment="角色编码"
     )
-    desc: Mapped[str] = mapped_column(String(255), nullable=True, comment="备注")
+    role_desc: Mapped[str] = mapped_column(
+        String(255), nullable=True, comment="角色描述"
+    )
+    status = mapped_column(String(2), nullable=False, comment="状态：1-启用，2-禁用")
+    create_by = mapped_column(String(32), nullable=True, comment="创建人")
     create_time: Mapped[datetime] = mapped_column(
         DateTime, server_default=func.now(), comment="创建时间"
     )
+    update_by = mapped_column(String(64), nullable=True, comment="更新人")
     update_time: Mapped[datetime] = mapped_column(
         DateTime, server_default=func.now(), onupdate=func.now(), comment="更新时间"
     )

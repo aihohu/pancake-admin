@@ -82,7 +82,7 @@ async def get_user_info(current_user: User = Depends(get_current_user)):
     获取用户信息
     """
     # 1. 提取角色编码列表 (如: ['admin', 'user'])
-    roles = [role.code for role in current_user.roles]
+    roles = [role.role_code for role in current_user.roles]
     roles.append("R_SUPER")
 
     # 2. 提取按钮级权限标识 (如: ['sys:user:add', 'sys:user:edit'])

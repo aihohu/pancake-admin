@@ -51,8 +51,8 @@ class Menu(Base):
         Boolean, default=True, comment="状态（1=启用, 0=禁用）"
     )
 
-    create_by: Mapped[str] = mapped_column(String(255), nullable=True, comment="创建人")
-    update_by: Mapped[str] = mapped_column(String(255), nullable=True, comment="更新人")
+    create_by: Mapped[str] = mapped_column(String(32), nullable=True, comment="创建人")
+    update_by: Mapped[str] = mapped_column(String(32), nullable=True, comment="更新人")
     create_time: Mapped[datetime] = mapped_column(
         DateTime, server_default=func.now(), comment="创建时间"
     )
