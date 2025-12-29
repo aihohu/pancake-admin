@@ -12,7 +12,7 @@ class UserBase(BaseModel):
     user_email: str = Field(..., description="邮箱")
     user_phone: str = Field(..., description="手机号")
     user_gender: str = Field(..., description="用户性别")
-    is_active: str = Field(..., description="状态")
+    status: str = Field(..., description="状态")
     roles: list[str] = []  # 创建时分配的角色 ID 列表
 
     model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
@@ -38,7 +38,10 @@ class UserQuery(BaseModel):
     size: int = 10
     user_name: str | None = None
     nickname: str | None = None
-    status: bool | None = None
+    user_phone: str | None = None
+    user_email: str | None = None
+    user_gender: str | None = None
+    status: str | None = None
 
     model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
 
@@ -47,7 +50,7 @@ class UserOut(BaseModel):
     user_id: int
     user_name: str
     nickname: str
-    is_active: str
+    status: str
 
     # 核心：返回给前端时转为字符串
     @field_serializer("user_id")
@@ -67,7 +70,7 @@ class UserItemOut(BaseModel):
     user_email: str | None = None
     user_phone: str | None = None
     user_gender: str | None = None
-    is_active: str | None = None
+    status: str | None = None
     create_time: datetime
     # 可以在此扩展角色信息
     roles: list[str] = []

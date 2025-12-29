@@ -35,8 +35,14 @@ async def get_user_list(
         filters.append(User.user_name.contains(query.user_name))
     if query.nickname:
         filters.append(User.nickname.contains(query.nickname))
-    if query.status is not None:
-        filters.append(User.is_active == query.status)
+    if query.user_gender:
+        filters.append(User.user_gender.contains(query.user_gender))
+    if query.user_phone:
+        filters.append(User.user_phone.contains(query.user_phone))
+    if query.user_email:
+        filters.append(User.user_email.contains(query.user_email))
+    if query.status:
+        filters.append(User.status == query.status)
 
     # 2. 查询总数
     count_stmt = select(func.count()).select_from(User).where(and_(*filters))

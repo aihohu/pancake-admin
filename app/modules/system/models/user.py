@@ -24,7 +24,7 @@ class User(Base):
     hashed_password: Mapped[str] = mapped_column(
         String(255), nullable=False, comment="加密密码"
     )
-    is_active: Mapped[str] = mapped_column(String(10), default="1", comment="状态")
+    status: Mapped[str] = mapped_column(String(10), default="1", comment="状态")
 
     user_avatar: Mapped[str] = mapped_column(
         String(255), nullable=True, comment="头像地址"

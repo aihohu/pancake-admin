@@ -54,7 +54,7 @@ class AuthService:
                 status_code=status.HTTP_401_UNAUTHORIZED, detail="账号或密码错误"
             )
 
-        if not user.is_active:
+        if not user.status or user.status == "2":
             raise HTTPException(status_code=403, detail="账号已被禁用")
 
         return user
@@ -105,7 +105,7 @@ async def get_current_user(
     if user is None:
         raise credentials_exception
 
-    if not user.is_active:
+    if not user.status or user.status == "2":
         raise HTTPException(status_code=403, detail="账号已被禁用")
 
     return user

@@ -28,7 +28,7 @@ async def register(user_in: UserCreate, db: AsyncSession = Depends(get_db)):
         user_name=user_in.user_name,
         nickname=user_in.nickname,
         hashed_password=get_password_hash(user_in.password),  # 密码加密
-        is_active=True,
+        status="1",
     )
 
     db.add(new_user)
@@ -61,7 +61,7 @@ async def login(
 #             status_code=status.HTTP_401_UNAUTHORIZED, detail="账号或密码错误"
 #         )
 
-#     if not user.is_active:
+#     if not user.status:
 #         raise HTTPException(status_code=403, detail="账号已被禁用")
 
 #     # 3. 生成 Access Token
