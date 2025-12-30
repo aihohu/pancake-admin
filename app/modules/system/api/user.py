@@ -103,19 +103,19 @@ async def add_user(user_in: UserCreate, db: AsyncSession = Depends(get_db)):
 async def update_user(
     user_id: int, user_in: UserUpdate, db: AsyncSession = Depends(get_db)
 ):
-    # 1. 查询用户（带角色预加载）
+    # 查询用户（带角色预加载）
     stmt = select(User).where(User.user_id == user_id).options(selectinload(User.roles))
     result = await db.execute(stmt)
     user = result.scalars().first()
     if not user:
         raise HTTPException(status_code=404, detail="用户不存在")
 
-    # 2. 更新基础字段
+    # 更新基础字段, 排出roles 和 password
     update_data = user_in.model_dump(exclude={"roles", "password"}, exclude_unset=True)
     for field, value in update_data.items():
         setattr(user, field, value)
 
-    # 3. 更新角色关联
+    # 更新角色关联
     if user_in.roles is not None:
         role_result = await db.execute(
             select(Role).where(Role.role_code.in_(user_in.roles))

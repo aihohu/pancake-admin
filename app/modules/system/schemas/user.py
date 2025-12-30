@@ -23,7 +23,7 @@ class UserCreate(UserBase):
 
 
 class UserUpdate(UserBase):
-    password: str | None = Field(..., min_length=6, description="明文密码")
+    password: str | None = Field(..., description="明文密码")
 
 
 class UserLogin(BaseModel):
