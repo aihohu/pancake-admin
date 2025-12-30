@@ -3,7 +3,7 @@ from collections.abc import AsyncGenerator
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
 
-from app.core.config import settings  # 假设你在 core/config.py 中处理了环境变量
+from app.core.config import settings
 
 # 1. 创建异步数据库引擎
 # echo=True 会在终端打印 SQL 语句，开发环境下很有用
@@ -13,6 +13,9 @@ engine = create_async_engine(
     pool_pre_ping=True,  # 自动检查连接是否存活
     pool_size=10,  # 连接池大小
     max_overflow=20,  # 超过池大小后允许的额外连接数
+    pool_recycle=3600,  # 每隔一小时强制回收连接（建议小于数据库或防火墙的 idle_timeout）
+    pool_timeout=30,  # 等待连接池中连接释放的最大秒数
+    pool_use_lifo=True,  # 优先使用最近使用过的连接（保持连接活跃，减少被断开风险）
 )
 
 # 2. 创建异步 Session 工厂
