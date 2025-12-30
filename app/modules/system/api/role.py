@@ -1,5 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import and_, func, select
+from fastapi import APIRouter, Body, Depends, HTTPException
+from sqlalchemy import and_, delete, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth import get_current_user
@@ -97,13 +97,13 @@ async def add_role(
     if check.scalars().first():
         raise HTTPException(status_code=400, detail="角色编码已存在")
 
-    new_role = Role(**role_in.model_dump(), create_by=current_user.username)
+    new_role = Role(**role_in.model_dump(), create_by=current_user.user_name)
     db.add(new_role)
     await db.commit()
     return ResponseModel.success(msg="角色创建成功")
 
 
-@router.put("/update/{role_id}", summary="编辑角色信息")
+@router.put("/{role_id}", summary="编辑角色信息")
 async def update_role(
     role_id: int,
     role_in: RoleUpdate,
@@ -121,12 +121,12 @@ async def update_role(
     for field, value in update_data.items():
         setattr(role, field, value)
 
-    role.update_by = current_user.username
+    role.update_by = current_user.user_name
     await db.commit()
     return ResponseModel.success(msg="角色更新成功")
 
 
-@router.delete("/delete/{role_id}", summary="删除指定角色")
+@router.delete("/{role_id}", summary="删除指定角色")
 async def delete_role(role_id: int, db: AsyncSession = Depends(get_db)):
     """
     物理删除角色。注意：在有用户关联此角色时应谨慎操作
@@ -138,6 +138,29 @@ async def delete_role(role_id: int, db: AsyncSession = Depends(get_db)):
     await db.delete(role)
     await db.commit()
     return ResponseModel.success(msg="角色删除成功")
+
+
+@router.post("/batch-delete", summary="批量删除用户")
+async def batch_delete_roles(
+    ids: list[int] = Body(...),
+    db: AsyncSession = Depends(get_db),
+    _current_user: User = Depends(get_current_user),
+):
+    # 过滤掉 超级管理员 权限，防止误删
+    check_stmt = select(Role.role_id).where(
+        and_(Role.role_id.in_(ids), Role.role_code == "R_SUPER")
+    )
+    admin_result = await db.execute(check_stmt)
+    if admin_result.scalars().first():
+        raise HTTPException(
+            status_code=400, detail="所选列表中包含系统管理员角色，禁止批量删除"
+        )
+
+    stmt = delete(Role).where(Role.role_id.in_(ids))
+    result = await db.execute(stmt)
+
+    await db.commit()
+    return ResponseModel.success(msg=f"成功删除 {result.rowcount} 条数据")
 
 
 @router.get("/{role_id}", response_model=ResponseModel[RoleOut], summary="获取角色详情")
