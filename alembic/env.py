@@ -1,19 +1,29 @@
 import asyncio
 from logging.config import fileConfig
+import os
 
+from dotenv import load_dotenv
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
 
-# 导入你的模型
+# Import your model
 from app.db.base import Base
 from app.modules.system.models.user import User
 from app.modules.system.models.role import Role
 from app.modules.system.models.menu import Menu
 
+load_dotenv()
 config = context.config
+
+# If sqlalchemy.url is not set in alembic.ini, it will be obtained from environment variables.
+if config.get_main_option("sqlalchemy.url") is None:
+    database_url = os.getenv("DATABASE_URL")
+    if not database_url:
+        raise ValueError("DATABASE_URL not set in environment")
+    config.set_main_option("sqlalchemy.url", database_url)
 
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)

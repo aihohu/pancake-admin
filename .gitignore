@@ -10,7 +10,6 @@ htmlcov
 alembic/versions/*
 .env
 .env.prod
-alembic.ini
 .DS_Store
 
 __pycache__/
